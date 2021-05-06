@@ -7,57 +7,71 @@ import VisuallyHidden from '../VisuallyHidden';
 
 const SIZES = {
   small: {
-    "--height": 8 + "px"
+    height: 8,
+    padding: 0,
+    radius: 4
   },
   medium: {
-    "--height": 12 + "px"
+    height: 12,
+    padding: 0,
+    radius: 4
   },
   large: {
-    "--height": 24 + "px",
-    "--padding": 4 + "px"
+    height: 16,
+    padding: 4,
+    radius: 8
   }
 };
 
 const ProgressBar = ({ value, size }) => {
   const styles = SIZES[size];
 
+  if (!styles) {
+    throw new Error(`Unknown size passed to ProgressBar: ${size}`)
+  }
+
   return (
-    <Bar
+    <Wrapper
       role="progressbar"
       aria-valuenow={value}
       aria-valuemin="0"
       aria-valuemax="100"
-      value={value}
-      min={0}
-      max={100}
-      style={styles}
+      style={{
+        '--padding': styles.padding + 'px',
+        '--radius': styles.radius + 'px'
+      }}
     >
       <VisuallyHidden>{value}</VisuallyHidden>
-    </Bar>
+      <BarWrapper>
+        <Bar
+          style={{
+            '--width': value + '%',
+            '--height': styles.height + 'px'
+          }}
+        />
+      </BarWrapper>
+    </Wrapper>
   );
 };
 
-const Bar = styled.progress`
-  &[value] {
-    /* Reset the default appearance */
-    -webkit-appearance: none;
-    appearance: none;
-    /* Custom styles */
-    height: var(--height);
-    width: 370px;
-  }
+const Wrapper = styled.div`
+  background-color: ${COLORS.transparentGray15};
+  box-shadow: inset 0px 2px 4px ${COLORS.transparentGray35};
+  border-radius: var(--radius);
+  padding: var(--padding);
+`;
 
-  &[value]::-webkit-progress-bar {
-    background-color: ${COLORS.transparentGray15};
-    box-shadow: inset 0px 2px 4px ${COLORS.transparentGray35};
-    padding: var(--padding);
-    border-radius: 4px;
-  }
+const BarWrapper = styled.div`
+  border-radius: 4px;
+  /* Trim off corners when ProgressBar is near-full */
+  overflow: hidden;
+`;
 
-  &[value]::-webkit-progress-value {
-    background-color: ${COLORS.primary};
-    border-radius: 4px 0px 0px 4px;
-  }
+const Bar = styled.div`
+  width: var(--width);
+  height: var(--height);
+  background-color: ${COLORS.primary};
+  border-radius: 4px 0 0 4px;
 `;
 
 export default ProgressBar;
