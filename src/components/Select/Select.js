@@ -9,38 +9,65 @@ const Select = ({ label, value, onChange, children }) => {
   const displayedValue = getDisplayedValue(value, children);
 
   return (
-    <SelectDropdown
-      value={value}
-      onChange={onChange}
-      style={{ 'width': 16 * displayedValue.length + 16 + 'px' }}
-    >
-      {children}
-      <Icon id="chevron-down" />
-    </SelectDropdown>
+    <Wrapper>
+      <NativeSelect
+        value={value}
+        onChange={onChange}
+      >
+        {children}
+      </NativeSelect>
+      <CustomSelect>
+        {displayedValue}
+        <IconWrapper style={{ '--size': 24 + 'px' }}>
+          <Icon id="chevron-down" stroke-width={1} size={24} />
+        </IconWrapper>
+      </CustomSelect>
+    </Wrapper>
   );
 };
 
-const SelectDropdown = styled.select`
-  font-size: 16px;
-  padding: 12px 16px;
+const Wrapper = styled.div`
+  position: relative;
+  width: max-content;
+
+`;
+
+const NativeSelect = styled.select`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+`;
+
+const CustomSelect = styled.div`
+  font-size: ${16 / 16 }rem;
   color: ${COLORS.gray700};
   background-color: ${COLORS.transparentGray15};
+  padding: 12px 16px;
+  padding-right: 52px;
   border-radius: 8px;
-  border: transparent;
-  background-size: 20px;
 
-  &:focus {
-    outline: 0;
-    box-shadow: 0 0 0 1px blue;
+  ${NativeSelect}:focus + & {
+    outline: 1px dotted #212121;
+    outline: 5px auto -webkit-focus-ring-color;
   }
 
-  &:hover {
+  ${NativeSelect}:hover + & {
     color: ${COLORS.black};
   }
 `;
 
-const Wrapper = styled.div`
-
+const IconWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 10px;
+  margin: auto;
+  width: var(--size);
+  height: var(--size);
+  pointer-events: none;
 `;
 
 export default Select;
